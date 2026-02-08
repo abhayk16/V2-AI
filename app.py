@@ -1,4 +1,4 @@
-from flask import Flask, request, session, send_file
+from flask import Flask, request, session, send_file, redirect, url_for
 from groq import Groq
 import os
 from dotenv import load_dotenv
@@ -10,16 +10,37 @@ app.secret_key = "supersecretkey"
 
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
+WEBSITE_USERNAME = os.getenv("WEBSITE_USERNAME")
+WEBSITE_PASSWORD = os.getenv("WEBSITE_PASSWORD")
 
+
+# ---------------- LOGIN ----------------
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if username == WEBSITE_USERNAME and password == WEBSITE_PASSWORD:
+            session["logged_in"] = True
+            return redirect(url_for("home"))
+
+    return send_file("login.html")
+
+
+# ---------------- HOME ----------------
 @app.route("/", methods=["GET", "POST"])
 def home():
+
+    if not session.get("logged_in"):
+        return redirect(url_for("login"))
 
     if "history" not in session:
         session["history"] = []
 
     if request.method == "POST":
 
-        # Reset chat
         if "new_chat" in request.form:
             session["history"] = []
             session.modified = True
@@ -29,7 +50,6 @@ def home():
 
             if user_message:
                 try:
-                    # System Prompt
                     messages = [
                         {
                             "role": "system",
@@ -37,23 +57,19 @@ def home():
 
 Answer the user's question using ONLY the company IT support knowledge provided.
 
-You must generate solutions strictly based on the company IT incident CSV data.
-
-If the question is not related to an IT incident (for example: "Who is cm of india"),
+If the question is not related to an IT incident,
 respond with:
 "Apologies — this request is not related to an IT incident. I can only provide IT incident solutions."
 
 Behavior rules:
 - Never act like an AI.
-- Never mention knowledge base, dataset, or context.
-- Speak like a human technician in live support chat.
-- Provide clear step-by-step instructions.
+- Speak like a human technician.
+- Provide step-by-step instructions.
 - Keep answers short and practical.
 """
                         }
                     ]
 
-                    # Add previous history
                     for chat in session["history"]:
                         messages.append(
                             {"role": "user", "content": chat["user"]}
@@ -62,12 +78,10 @@ Behavior rules:
                             {"role": "assistant", "content": chat["bot"]}
                         )
 
-                    # Add current user message
                     messages.append(
                         {"role": "user", "content": user_message}
                     )
 
-                    # Call Groq API
                     response = client.chat.completions.create(
                         model="llama-3.1-8b-instant",
                         messages=messages
@@ -78,7 +92,6 @@ Behavior rules:
                 except Exception as e:
                     reply = f"Error: {str(e)}"
 
-                # Save to session
                 session["history"].append({
                     "user": user_message,
                     "bot": reply
@@ -86,11 +99,9 @@ Behavior rules:
 
                 session.modified = True
 
-    # Load HTML
     with open("index.html", "r", encoding="utf-8") as f:
         html = f.read()
 
-    # Inject history bubbles
     history_html = ""
 
     for chat in session["history"]:

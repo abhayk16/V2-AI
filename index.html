@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>IT Assistant</title>
+    <title>InfraBot</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
@@ -16,19 +16,42 @@
     </div>
 
     <div class="main">
-        <h2>IT Assistant</h2>
+        <h2>InfraBot</h2>
 
         <div class="chat-box">
             {{history}}
         </div>
 
         <form method="POST" class="input-form">
-            <input type="text" name="message" placeholder="Ask IT question..." required>
+            <input 
+                type="text" 
+                id="messageInput"
+                name="message" 
+                placeholder="Ask IT question..." 
+                required
+            >
             <button type="submit">Send</button>
         </form>
     </div>
 
 </div>
+
+<!-- Auto Focus Script -->
+<script>
+    window.onload = function() {
+        const input = document.getElementById("messageInput");
+        const chatBox = document.querySelector(".chat-box");
+
+        if (input) {
+            input.focus();
+        }
+
+        if (chatBox) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    };
+</script>
+
 
 </body>
 </html>

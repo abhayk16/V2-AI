@@ -1,3 +1,4 @@
+/* GLOBAL */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -5,11 +6,13 @@ body {
     color: #ffffff;
 }
 
+/* LAYOUT */
 .layout {
     display: flex;
     height: 100vh;
 }
 
+/* SIDEBAR */
 .sidebar {
     width: 240px;
     background: #0f0f17;
@@ -30,8 +33,14 @@ body {
     border: none;
     border-radius: 6px;
     cursor: pointer;
+    transition: 0.2s ease;
 }
 
+.sidebar button:hover {
+    background: #2e2e50;
+}
+
+/* MAIN AREA */
 .main {
     flex: 1;
     padding: 30px;
@@ -39,6 +48,7 @@ body {
     flex-direction: column;
 }
 
+/* CHAT BOX */
 .chat-box {
     flex: 1;
     overflow-y: auto;
@@ -50,11 +60,13 @@ body {
     gap: 14px;
 }
 
+/* MESSAGE ROW */
 .message-row {
     display: flex;
     width: 100%;
 }
 
+/* ALIGNMENTS */
 .user-row {
     justify-content: flex-end;
 }
@@ -63,20 +75,25 @@ body {
     justify-content: flex-start;
 }
 
+/* USER BUBBLE */
 .chat-user {
     background: linear-gradient(45deg, #4f46e5, #6366f1);
     padding: 12px 16px;
     border-radius: 18px 18px 4px 18px;
     max-width: 70%;
+    word-wrap: break-word;
 }
 
+/* BOT BUBBLE */
 .chat-bot {
     background: #2a2d3f;
     padding: 12px 16px;
     border-radius: 18px 18px 18px 4px;
     max-width: 70%;
+    word-wrap: break-word;
 }
 
+/* INPUT AREA */
 .input-form {
     display: flex;
     gap: 10px;
@@ -88,6 +105,7 @@ input {
     padding: 12px;
     border-radius: 8px;
     border: none;
+    outline: none;
 }
 
 button {
@@ -97,4 +115,16 @@ button {
     background: linear-gradient(45deg, #4f46e5, #06b6d4);
     color: white;
     cursor: pointer;
+    transition: 0.2s ease;
+}
+
+button:hover {
+    opacity: 0.9;
+    transform: scale(1.03);
+}
+
+/* LOGIN CENTERING SUPPORT */
+.main.center {
+    justify-content: center;
+    align-items: center;
 }
